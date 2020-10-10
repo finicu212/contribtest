@@ -38,13 +38,14 @@ def write_output(name, html):
 
 def generate_site(folder_path):
     log.info("Generating site from %r", folder_path)
-    jinja_env = jinja2.Environment(loader=FileSystemLoader(folder_path + 'layout'))
-    for file_path in list_files(folder_path):
+    jinja_loader = jinja2.FileSystemLoader(os.path.join(folder_path, 'layout'))
+    jinja_env = jinja2.Environment(loader = jinja_loader)
+    for file_path, name in list_files(folder_path):
         metadata, content = read_file(file_path)
-        template_name = metadata['template']
+        template_name = metadata['layout']
         template = jinja_env.get_template(template_name)
         data = dict(metadata, content=content)
-        html = template(**data)
+        html = template.render(**data)
         write_output(name, html)
         log.info("Writing %r with template %r", name, template_name)
 
