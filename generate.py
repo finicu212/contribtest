@@ -17,7 +17,7 @@ def list_files(folder_path):
         base, ext = os.path.splitext(name)
         if ext != '.rst':
             continue
-        yield os.path.join(folder_path, name)
+        yield os.path.join(folder_path, name), base
 
 def read_file(file_path):
     with open(file_path, 'r') as f:
@@ -33,7 +33,9 @@ def read_file(file_path):
 
 def write_output(name, html):
     # TODO should not use sys.argv here, it breaks encapsulation
-    with open(os.path.join(sys.argv[2], name), 'w+') as f:
+    if not os.path.exists(sys.argv[2]):
+        os.mkdir(sys.argv[2])
+    with open(os.path.join(sys.argv[2], name + ".html"), 'w') as f:
         f.write(html)
 
 def generate_site(folder_path):
