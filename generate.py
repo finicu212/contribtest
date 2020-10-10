@@ -33,7 +33,7 @@ def read_file(file_path):
 
 def write_output(name, html):
     # TODO should not use sys.argv here, it breaks encapsulation
-    with open(os.path.join(sys.argv[2], name+'.html')) as f:
+    with open(os.path.join(sys.argv[2], name), 'w+') as f:
         f.write(html)
 
 def generate_site(folder_path):
