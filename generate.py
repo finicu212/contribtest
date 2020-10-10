@@ -4,6 +4,8 @@
 # the generated `output` should be the same as `test/expected_output`
 
 import os
+import sys
+import json
 import logging
 import jinja2
 
