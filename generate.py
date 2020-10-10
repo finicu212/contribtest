@@ -20,7 +20,7 @@ def list_files(folder_path):
         yield os.path.join(folder_path, name)
 
 def read_file(file_path):
-    with open(file_path, 'rb') as f:
+    with open(file_path, 'r') as f:
         raw_metadata = ""
         for line in f:
             if line.strip() == '---':
@@ -28,7 +28,7 @@ def read_file(file_path):
             raw_metadata += line
         content = ""
         for line in f:
-            content += line
+            content += line.rstrip(" \n")
     return json.loads(raw_metadata), content
 
 def write_output(name, html):
