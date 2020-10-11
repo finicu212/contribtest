@@ -44,11 +44,10 @@ def generate_site(folder_path, output_dir):
     jinja_loader = jinja2.FileSystemLoader(os.path.join(folder_path, 'layout'))
     jinja_env = jinja2.Environment(loader = jinja_loader, trim_blocks = True, lstrip_blocks = True)
     for file_path, name in list_files(folder_path):
-        metadata, content = read_file(file_path)
+        metadata, metadata['content'] = read_file(file_path)
         template_name = metadata['layout']
         template = jinja_env.get_template(template_name)
-        data = dict(metadata, content=content)
-        html = template.render(data)
+        html = template.render(metadata)
 
         # get rid of excess new lines.
         # alternatively could have added `-` for the template content block
