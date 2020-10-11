@@ -58,8 +58,8 @@ def generate_site(folder_path, output_dir):
         log.info("Writing %r with template %r", name, template_name)
 
 
-def main():
-    generate_site(sys.argv[1], sys.argv[2])
+def main(input_dir, output_dir):
+    generate_site(input_dir, output_dir)
 
 
 if __name__ == '__main__':
@@ -68,4 +68,4 @@ if __name__ == '__main__':
     	print("Unexpected number of arguments. Exiting...")
     	quit()
 
-    main()
+    main(sys.argv[1], sys.argv[2])
