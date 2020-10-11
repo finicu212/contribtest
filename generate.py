@@ -23,12 +23,14 @@ def read_file(file_path):
     with open(file_path, 'r') as f:
         raw_metadata = ""
         for line in f:
+            line = line.rstrip("\n")
             if line.strip() == '---':
                 break
             raw_metadata += line
         content = ""
         for line in f:
-            content += line.rstrip(" \n")
+            line = line.rstrip("\n")
+            content += line
     return json.loads(raw_metadata), content
 
 def write_output(name, html):
@@ -41,13 +43,17 @@ def write_output(name, html):
 def generate_site(folder_path):
     log.info("Generating site from %r", folder_path)
     jinja_loader = jinja2.FileSystemLoader(os.path.join(folder_path, 'layout'))
-    jinja_env = jinja2.Environment(loader = jinja_loader)
+    jinja_env = jinja2.Environment(loader = jinja_loader, trim_blocks = True, lstrip_blocks = True)
     for file_path, name in list_files(folder_path):
         metadata, content = read_file(file_path)
         template_name = metadata['layout']
         template = jinja_env.get_template(template_name)
         data = dict(metadata, content=content)
         html = template.render(**data)
+
+        # get rid of excess new lines.
+        # alternatively could have added `-` for the template content block
+        html = html.replace('\n\n', '\n')
         write_output(name, html)
         log.info("Writing %r with template %r", name, template_name)
 
