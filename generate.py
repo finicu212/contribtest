@@ -48,7 +48,7 @@ def generate_site(folder_path, output_dir):
         template_name = metadata['layout']
         template = jinja_env.get_template(template_name)
         data = dict(metadata, content=content)
-        html = template.render(**data)
+        html = template.render(data)
 
         # get rid of excess new lines.
         # alternatively could have added `-` for the template content block
