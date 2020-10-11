@@ -50,6 +50,10 @@ def generate_site(folder_path):
         template = jinja_env.get_template(template_name)
         data = dict(metadata, content=content)
         html = template.render(**data)
+
+        # get rid of excess new lines.
+        # alternatively could have added `-` for the template content block
+        html = html.replace('\n\n', '\n')
         write_output(name, html)
         log.info("Writing %r with template %r", name, template_name)
 
