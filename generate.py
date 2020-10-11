@@ -33,14 +33,13 @@ def read_file(file_path):
             content += line
     return json.loads(raw_metadata), content
 
-def write_output(name, html):
-    # TODO should not use sys.argv here, it breaks encapsulation
-    if not os.path.exists(sys.argv[2]):
-        os.mkdir(sys.argv[2])
-    with open(os.path.join(sys.argv[2], name + ".html"), 'w') as f:
+def write_output(name, html, output_dir):
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+    with open(os.path.join(output_dir, name + ".html"), 'w') as f:
         f.write(html)
 
-def generate_site(folder_path):
+def generate_site(folder_path, output_dir):
     log.info("Generating site from %r", folder_path)
     jinja_loader = jinja2.FileSystemLoader(os.path.join(folder_path, 'layout'))
     jinja_env = jinja2.Environment(loader = jinja_loader, trim_blocks = True, lstrip_blocks = True)
@@ -54,12 +53,12 @@ def generate_site(folder_path):
         # get rid of excess new lines.
         # alternatively could have added `-` for the template content block
         html = html.replace('\n\n', '\n')
-        write_output(name, html)
+        write_output(name, html, output_dir)
         log.info("Writing %r with template %r", name, template_name)
 
 
 def main():
-    generate_site(sys.argv[1])
+    generate_site(sys.argv[1], sys.argv[2])
 
 
 if __name__ == '__main__':
