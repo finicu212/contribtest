@@ -33,34 +33,36 @@ def list_files(folder_path):
 
 #   /*
 #   
-#   given a path to a .rst file, breaks the file up into json metadata and content
+#   json-ify a .rst file. content is metadata['content']
 #
 #   args:
 #       file_path: the path to the target .rst file
 #   
 #   returns:
 #       - json object
-#       - content
 #   
 #   */
 def read_file(file_path):
-	with open(file_path, 'r') as f:
-		raw_metadata = ""
+    with open(file_path, 'r') as f:
+        raw_metadata = ""
 
         # metadata
-		for line in f:
-			if line.strip() == '---':
-				break
-			raw_metadata += line
+        for line in f:
+            if line.strip() == '---':
+                break
+            raw_metadata += line
 
         # content
-		content = ""
-		for line in f:
-			content += line
+        content = ""
+        for line in f:
+            content += line 
 
+        metadata = None
+        metadata = json.loads(raw_metadata)
         # get rid of stray \n
-		content = content.strip()
-		return json.loads(raw_metadata), content
+        metadata['content'] = content.strip()
+
+    return metadata
 
 #   /*
 #   
@@ -94,7 +96,7 @@ def generate_site(folder_path, output_dir):
     jinja_loader = jinja2.FileSystemLoader(os.path.join(folder_path, 'layout'))
     jinja_env = jinja2.Environment(loader = jinja_loader, trim_blocks = True, lstrip_blocks = True)
     for file_path, name in list_files(folder_path):
-        metadata, metadata['content'] = read_file(file_path)
+        metadata = read_file(file_path)
         template_name = metadata['layout']
         template = jinja_env.get_template(template_name)
         html = template.render(metadata)
