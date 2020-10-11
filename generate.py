@@ -43,7 +43,7 @@ def write_output(name, html):
 def generate_site(folder_path):
     log.info("Generating site from %r", folder_path)
     jinja_loader = jinja2.FileSystemLoader(os.path.join(folder_path, 'layout'))
-    jinja_env = jinja2.Environment(loader = jinja_loader)
+    jinja_env = jinja2.Environment(loader = jinja_loader, trim_blocks = True, lstrip_blocks = True)
     for file_path, name in list_files(folder_path):
         metadata, content = read_file(file_path)
         template_name = metadata['layout']
