@@ -23,12 +23,14 @@ def read_file(file_path):
     with open(file_path, 'r') as f:
         raw_metadata = ""
         for line in f:
+            line = line.rstrip("\n")
             if line.strip() == '---':
                 break
             raw_metadata += line
         content = ""
         for line in f:
-            content += line.rstrip(" \n")
+            line = line.rstrip("\n")
+            content += line
     return json.loads(raw_metadata), content
 
 def write_output(name, html):
