@@ -2,6 +2,7 @@ import unittest
 import generate
 import filecmp
 import os
+import shutil
 from unittest import mock
 
 class TestGenerate(unittest.TestCase):
@@ -19,12 +20,26 @@ class TestGenerate(unittest.TestCase):
 			# make sure that the file contents are identical
 			self.assertTrue(filecmp.cmp(outputted_file, os.path.join(expected_dir, f)), "Test fail: Unexpected output in " + f)
 
-	#@mock.patch('generate.read_file')
-	#def test_reading(self, read_file_mock):
-	#	with open("example.rst", "w") as f:
-	#		f.write('{"title": "example", "layout": "example.html"} --- content example here')
+	def test_list_files(self):
+		test_location = "test_listing"
+		if not os.path.exists(test_location):
+			os.mkdir(test_location)
 
+		for i in range(1, 15):
+			if i % 2 == 0:
+				# create some non-rst files too
+				with open(os.path.join(test_location, "nonrst_file_" + str(i)), "w") as f:
+					pass
+			# create 15 rst files
+			with open(os.path.join(test_location, "test_file_" + str(i) + ".rst"), "w") as f:
+				pass
 
+		num_rst = 0
+		for file, basename in generate.list_files(test_location):
+			num_rst += 1
+		# get rid of the directory when we're done counting
+		shutil.rmtree(test_location)
+		self.assertTrue(num_rst == i, "Test fail: list_files() fails to list correct number of .rst files")
 
 # to be able to just run `python test_generate.py` directly
 if __name__ == '__main__':
