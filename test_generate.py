@@ -47,6 +47,21 @@ class TestGenerate(unittest.TestCase):
 		shutil.rmtree(test_location)
 		self.assertTrue(num_rst == i, "Test fail: list_files() fails to list correct number of .rst files")
 
+	def test_write_output(self):
+		test_location = "test_out"
+		self.prep_test(test_location)
+
+		for i in range(1, 15):
+			generate.write_output(str(i), "content of html here", test_location)
+
+		for name in os.listdir(test_location):
+			f = open(os.path.join(test_location, name), 'r')
+			self.assertTrue(f.read() == "content of html here", "Test fail: write_output() writes wrong content to files")
+			f.close()
+			base, ext = os.path.splitext(name)
+			self.assertTrue(ext == ".html", "Test fail: write_output() doesn't write .html files")
+
+		shutil.rmtree(test_location)
 # to be able to just run `python test_generate.py` directly
 if __name__ == '__main__':
 	unittest.main()
