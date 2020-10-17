@@ -20,10 +20,16 @@ class TestGenerate(unittest.TestCase):
 			# make sure that the file contents are identical
 			self.assertTrue(filecmp.cmp(outputted_file, os.path.join(expected_dir, f)), "Test fail: Unexpected output in " + f)
 
-	def test_list_files(self):
-		test_location = "test_listing"
+	def prep_test(self, test_location):
 		if not os.path.exists(test_location):
 			os.mkdir(test_location)
+		else:
+			print(test_location + " already exists. aborting...")
+			quit()
+
+	def test_list_files(self):
+		test_location = "test_listing"
+		self.prep_test(test_location)
 
 		for i in range(1, 15):
 			if i % 2 == 0:
