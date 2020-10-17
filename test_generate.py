@@ -17,6 +17,34 @@ class TestGenerate(unittest.TestCase):
 		shutil.rmtree(self.input)
 		shutil.rmtree(self.output)
 
+	@mock.patch('generate.write_output')
+	def test_generate_site_no_layout_in_metadata(self, mock_call):
+		name = "empty_template.rst"
+		with open(os.path.join(self.input, name), 'w') as f:
+			f.write('''{"title": "Test"}
+					---
+					content''')
+		generate.generate_site(self.input, self.output)
+		self.assertFalse(mock_call.called, "Test fail: write_output() is called even if there is no template")
+
+	@mock.patch('generate.write_output')
+	def test_generate_site_invalid_template(self, mock_call):
+		name = "invalid_template.rst"
+		with open(os.path.join(self.input, name), 'w') as f:
+			f.write('''{"title": "title", "layout": "invalid"}
+				---
+				content''')
+		generate.generate_site(self.input, self.output)
+		self.assertFalse(mock_call.called, "Test fail: write_output() is called even if the template is invalid")
+
+	@mock.patch('generate.write_output')
+	def test_generate_site_empty(self, mock_call):
+		name = "empty.rst"
+		with open(os.path.join(self.input, name), 'w') as f:
+			f.write("{ }")
+		generate.generate_site(self.input, self.output)
+		self.assertFalse(mock_call.called, "Test fail: write_output() is called even if the metadata in rst file is empty")
+
 	def test_generate_site_from_example(self):
 		source_dir = "test/source"
 		expected_dir = "test/expected_output"
