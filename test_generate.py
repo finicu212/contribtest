@@ -6,6 +6,17 @@ import shutil
 from unittest import mock
 
 class TestGenerate(unittest.TestCase):
+
+	def setUp(self):
+		self.input = "testin"
+		self.output = "testout"
+		os.mkdir(self.input)
+		os.mkdir(self.output)
+
+	def tearDown(self):
+		shutil.rmtree(self.input)
+		shutil.rmtree(self.output)
+
 	def test_generate_site_from_example(self):
 		source_dir = "test/source"
 		expected_dir = "test/expected_output"
@@ -20,48 +31,33 @@ class TestGenerate(unittest.TestCase):
 			# make sure that the file contents are identical
 			self.assertTrue(filecmp.cmp(outputted_file, os.path.join(expected_dir, f)), "Test fail: Unexpected output in " + f)
 
-	def prep_test(self, test_location):
-		if not os.path.exists(test_location):
-			os.mkdir(test_location)
-		else:
-			print(test_location + " already exists. aborting...")
-			quit()
-
 	def test_list_files(self):
-		test_location = "test_listing"
-		self.prep_test(test_location)
-
 		for i in range(1, 15):
 			if i % 2 == 0:
 				# create some non-rst files too
-				with open(os.path.join(test_location, "nonrst_file_" + str(i)), "w") as f:
+				with open(os.path.join(self.output, "nonrst_file_" + str(i)), "w") as f:
 					pass
 			# create 15 rst files
-			with open(os.path.join(test_location, "test_file_" + str(i) + ".rst"), "w") as f:
+			with open(os.path.join(self.output, "test_file_" + str(i) + ".rst"), "w") as f:
 				pass
 
 		num_rst = 0
-		for file, basename in generate.list_files(test_location):
+		for file, basename in generate.list_files(self.output):
 			num_rst += 1
-		# get rid of the directory when we're done counting
-		shutil.rmtree(test_location)
+
 		self.assertTrue(num_rst == i, "Test fail: list_files() fails to list correct number of .rst files")
 
 	def test_write_output(self):
-		test_location = "test_out"
-		self.prep_test(test_location)
-
 		for i in range(1, 15):
-			generate.write_output(str(i), "content of html here", test_location)
+			generate.write_output(str(i), "content of html here", self.output)
 
-		for name in os.listdir(test_location):
-			f = open(os.path.join(test_location, name), 'r')
+		for name in os.listdir(self.output):
+			f = open(os.path.join(self.output, name), 'r')
 			self.assertTrue(f.read() == "content of html here", "Test fail: write_output() writes wrong content to files")
 			f.close()
 			base, ext = os.path.splitext(name)
 			self.assertTrue(ext == ".html", "Test fail: write_output() doesn't write .html files")
 
-		shutil.rmtree(test_location)
 # to be able to just run `python test_generate.py` directly
 if __name__ == '__main__':
 	unittest.main()
