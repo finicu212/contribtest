@@ -97,13 +97,20 @@ def generate_site(folder_path, output_dir):
     # initialize jinja2 environment & loader
     jinja_loader = jinja2.FileSystemLoader(os.path.join(folder_path, 'layout'))
     jinja_env = jinja2.Environment(loader = jinja_loader, trim_blocks = True, lstrip_blocks = True)
+
     for file_path, name in list_files(folder_path):
         metadata = read_file(file_path)
         if metadata == None:
+            # skip this file if no metadata provided
+            continue
+        try:
+            # don't get template name if it doesn't exist (assigning as None would not throw TemplateNotFound for some reason)
+            template_name = metadata['layout'] if len(metadata) > 2 else ""
+            template = jinja_env.get_template(template_name)
+        except jinja2.exceptions.TemplateNotFound:
+            # skip this file if can't find the template for it
             continue
 
-        template_name = metadata['layout']
-        template = jinja_env.get_template(template_name)
         html = template.render(metadata)
 
         # get rid of excess new lines.
