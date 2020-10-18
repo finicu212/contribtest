@@ -116,7 +116,6 @@ if __name__ == '__main__':
     logging.basicConfig()
     # break out if wrong usage
     if len(sys.argv) != 3:
-    	print("Unexpected number of arguments. Exiting...")
-    	quit()
+        raise TypeError("Unexpected number of arguments. Exiting...")
 
     main(sys.argv[1], sys.argv[2])
