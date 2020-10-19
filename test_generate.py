@@ -81,7 +81,7 @@ class TestGenerate(unittest.TestCase):
 
 		for name in os.listdir(self.output):
 			f = open(os.path.join(self.output, name), 'r')
-			self.assertTrue(f.read() == "content of html here", "Test fail: write_output() writes wrong content to files")
+			self.assertTrue(f.read() == "content of html here\n", "Test fail: write_output() writes wrong content to files")
 			f.close()
 			base, ext = os.path.splitext(name)
 			self.assertTrue(ext == ".html", "Test fail: write_output() doesn't write .html files")

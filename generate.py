@@ -4,12 +4,28 @@
 # the generated `output` should be the same as `test/expected_output`
 
 import os
+import re
 import sys
 import json
 import logging
 import jinja2
 
 log = logging.getLogger(__name__)
+
+#   /*
+#   
+#   gets a text with multiple \n chars and replaces all those characters with a single one
+#
+#   args:
+#       text: the target text with multiple offending chars
+#   
+#   returns:
+#       text without repeating offending chars
+#   
+#   */
+def squeeze(text):
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
+
 
 #   /*
 #   
@@ -61,7 +77,6 @@ def read_file(file_path):
         if len(metadata) == 0:
             metadata = None
         else:
-            # get rid of stray \n
             metadata['content'] = content.strip()
 
     return metadata
@@ -80,7 +95,8 @@ def write_output(name, html, output_dir):
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
     with open(os.path.join(output_dir, name + ".html"), 'w') as f:
-        f.write(html)
+        f.write(squeeze(html))
+        f.write('\n') # because the expected output says so
 
 #   /*
 #   
@@ -113,9 +129,6 @@ def generate_site(folder_path, output_dir):
 
         html = template.render(metadata)
 
-        # get rid of excess new lines.
-        # alternatively could have added `-` for the template content block
-        html = html.replace('\n\n', '\n')
         write_output(name, html, output_dir)
         log.info("Writing %r with template %r", name, template_name)
 
